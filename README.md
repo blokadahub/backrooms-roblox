@@ -1,44 +1,20 @@
-# Backrooms Roblox — projeto para celular
+# Backrooms Roblox — projeto descontinuado
 
-Protótipo de Backrooms construído com **Luau + Rojo 7.7.1**, compilado no **GitHub Actions** e publicado na experiência Roblox existente via **Open Cloud**.
+> [!CAUTION]
+> **Este protótipo foi descontinuado.** A experiência Roblox que ele utilizava foi reservada para o novo **[CL - Club Legacy](https://github.com/blokadahub/club-legacy-roblox)**. Não publique o Backrooms sobre essa experiência.
 
-## Arquivos
+O código permanece neste repositório exclusivamente como **histórico e referência técnica**. Não foi excluído.
 
-- `default.project.json`: estrutura do lugar usada pelo Rojo.
-- `src/Backrooms.server.luau`: constrói uma sala inicial das Backrooms quando o servidor inicia.
-- `.github/workflows/publish.yml`: valida, compila e, opcionalmente, publica o lugar.
+## O que foi preservado
 
-## Testar a compilação sem publicar
+- `src/Backrooms.server.luau`: protótipo de sala amarela criado com Luau.
+- `default.project.json`: mapeamento Rojo.
+- `.github/workflows/publish.yml`: **somente compilação histórica**. O passo de publicação por Roblox Open Cloud foi removido para impedir substituições acidentais do Club Legacy.
 
-1. Abra a aba **Actions** deste repositório.
-2. Selecione **Construir e publicar Backrooms no Roblox**.
-3. Clique em **Run workflow** e escolha a branch `main`.
-4. Deixe a opção **publicar** desmarcada e execute.
-5. Um resultado verde confirma somente a construção do arquivo, **não** o funcionamento do jogo.
-6. O arquivo `backrooms-rbxlx` estará na seção **Artifacts** da execução.
+## Testar a compilação histórica
 
-## Publicar no Roblox
+Abra **Actions > Backrooms | Compilacao historica (sem publicacao) > Run workflow**. O arquivo `backrooms.rbxlx` será gerado como artefato, sem qualquer atualização na experiência Roblox.
 
-**Atenção: publicar substitui o conteúdo do lugar de destino.** Use apenas uma experiência de testes, ou faça backup do lugar antes de publicar.
+## Projeto ativo
 
-Em **Settings → Secrets and variables → Actions**, configure:
-
-| Tipo | Nome |
-| --- | --- |
-| Secret | `ROBLOX_API_KEY` |
-| Variable | `ROBLOX_UNIVERSE_ID` |
-| Variable | `ROBLOX_PLACE_ID` |
-
-A chave de API do Roblox deve ter a permissão **universe-places: Write** restrita à experiência que receberá as atualizações. Nunca cole a chave nos arquivos do repositório.
-
-Depois de uma compilação de teste bem-sucedida, execute o mesmo workflow marcando **publicar**. Confirme o retorno com `versionNumber` e teste o jogo no aplicativo Roblox. O fluxo não publica automaticamente a cada commit.
-
-## Limitações da primeira versão
-
-O mapa inicial é uma sala experimental. Não há ainda labirinto procedural, objetivo de fuga, áudio ambiente, monstros ou testes automáticos de jogabilidade. O script cria os objetos quando o servidor começa.
-
-## Documentação
-
-- [Roblox — Publicação de lugares pela Open Cloud](https://create.roblox.com/docs/cloud/guides/usage-place-publishing)
-- [Rojo](https://rojo.space/docs/)
-- [GitHub — Execução manual de workflows](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
+**[CL - Club Legacy](https://github.com/blokadahub/club-legacy-roblox)** — simulador de carreira de manager em desenvolvimento, construído com Roblox, Luau, Rojo e GitHub Actions.
