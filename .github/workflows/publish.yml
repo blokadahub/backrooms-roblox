@@ -1,0 +1,45 @@
+
+name: Publicar Backrooms no Roblox
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar Rojo
+        run: |
+          cargo install rojo --locked
+
+      - name: Construir jogo
+        run: |
+          rojo build default.project.json \
+            --output backrooms.rbxlx
+
+      - name: Publicar no Roblox
+        env:
+          API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          UNIVERSE_ID: ${{ vars.ROBLOX_UNIVERSE_ID }}
+          PLACE_ID: ${{ vars.ROBLOX_PLACE_ID }}
+        run: |
+          test -n "$API_KEY"
+          test -n "$UNIVERSE_ID"
+          test -n "$PLACE_ID"
+
+          curl --fail-with-body \
+            --show-error \
+            --silent \
+            --request POST \
+            --url "https://apis.roblox.com/universes/v1/${UNIVERSE_ID}/places/${PLACE_ID}/versions?versionType=Published" \
+            --header "x-api-key: ${API_KEY}" \
+            --header "Content-Type: application/xml" \
+            --data-binary @backrooms.rbxlx
+            
