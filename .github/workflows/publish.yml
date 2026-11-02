@@ -1,45 +1,69 @@
-
-name: Publicar Backrooms no Roblox
+name: Construir e publicar Backrooms no Roblox
 
 on:
   workflow_dispatch:
+    inputs:
+      publicar:
+        description: "Publicar no Roblox? Desmarcado = somente testar a construção."
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
-jobs:
-  publicar:
-    runs-on: ubuntu-latest
+concurrency:
+  group: backrooms-publicacao
+  cancel-in-progress: false
 
+jobs:
+  construir:
+    name: Validar, construir e opcionalmente publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Instalar Rojo
-        run: |
-          cargo install rojo --locked
+      - name: Instalar Rojo 7.7.1
+        run: cargo install rojo --version 7.7.1 --locked
 
-      - name: Construir jogo
-        run: |
-          rojo build default.project.json \
-            --output backrooms.rbxlx
+      - name: Validar configuracao
+        run: python3 -m json.tool default.project.json > /dev/null
 
-      - name: Publicar no Roblox
+      - name: Construir arquivo Roblox
+        run: |
+          set -euo pipefail
+          rojo build default.project.json --output backrooms.rbxlx
+          test -s backrooms.rbxlx
+
+      - name: Salvar arquivo compilado
+        uses: actions/upload-artifact@v4
+        with:
+          name: backrooms-rbxlx
+          path: backrooms.rbxlx
+          if-no-files-found: error
+
+      - name: Publicar no Roblox apenas se solicitado
+        if: ${{ inputs.publicar }}
         env:
           API_KEY: ${{ secrets.ROBLOX_API_KEY }}
           UNIVERSE_ID: ${{ vars.ROBLOX_UNIVERSE_ID }}
           PLACE_ID: ${{ vars.ROBLOX_PLACE_ID }}
         run: |
-          test -n "$API_KEY"
-          test -n "$UNIVERSE_ID"
-          test -n "$PLACE_ID"
+          set -euo pipefail
+          if [[ -z "$API_KEY" ]]; then
+            echo "Erro: falta o secret ROBLOX_API_KEY."
+            exit 1
+          fi
+          if [[ ! "$UNIVERSE_ID" =~ ^[0-9]+$ || ! "$PLACE_ID" =~ ^[0-9]+$ ]]; then
+            echo "Erro: ROBLOX_UNIVERSE_ID ou ROBLOX_PLACE_ID invalido."
+            exit 1
+          fi
 
-          curl --fail-with-body \
-            --show-error \
-            --silent \
+          curl --fail-with-body --show-error --silent \
             --request POST \
             --url "https://apis.roblox.com/universes/v1/${UNIVERSE_ID}/places/${PLACE_ID}/versions?versionType=Published" \
             --header "x-api-key: ${API_KEY}" \
             --header "Content-Type: application/xml" \
             --data-binary @backrooms.rbxlx
-            
