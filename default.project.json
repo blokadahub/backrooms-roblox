@@ -1,0 +1,12 @@
+{
+  "name": "BackroomsMobile",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Backrooms": {
+        "$path": "src/Backrooms.server.luau"
+      }
+    }
+  }
+}
